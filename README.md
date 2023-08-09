@@ -52,3 +52,6 @@ routines for rotating an image, with help for angles larger than 45 degrees by u
 
 routines for more conveniently specifying a large set of file names for the input photographs.
 
+## REQUIRES
+
+Requires modules *verbose* and *intlist*
