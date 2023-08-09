@@ -19,7 +19,7 @@ def addargs(ap):
     paa("--inputnum","-n",
         help="Range of numbers for input files, eg 9700-9737")
     paa("--inputpattern",default="DSC_%04d.JPG",
-        help="filename pattern; eg DSC_%04d.JPG")
+        help="filename pattern") #; eg 'DSC_%04d.JPG'")
 
 def getfiles(args):
     if args.files:
@@ -32,6 +32,6 @@ def getfiles(args):
 
 if __name__ == "__main__":
 
-    f = files('9700-9736',dir='2023_06_06a')
+    f = files_fromstring('9700-9736',dir='2023_06_06a')
     print(f)
     
