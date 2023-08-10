@@ -34,9 +34,9 @@ Similar to tiled, but for each tile produces the most anomalous from the stack o
 
 This routine (unlike most of the rest of the routines in this package) works with only a single input image; it breaks it into tiles, and then jitters the tiles to produce a jittered version of the image. Kind of like pixel spread, but 1/ for tiles and 2/ the jitter is at the pixel and not the tile level.
 
-### gapify/gapify2d:
+### gapify:
 
-After an image is broken into tiles, the gapify routines can be used to add gaps between the tiles; these are by default black but the user can specify the desired color.
+After an image is broken into tiles, the gapify routine can be used to add gaps between the tiles; these are by default black but the user can specify the desired color.
 
 ## Libraries
 
