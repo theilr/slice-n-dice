@@ -5,7 +5,6 @@ import argparse
 import random
 from PIL import Image
 import verbose as v
-from tqdm import tqdm
 
 def _getargs():
     '''parse options from command line'''
@@ -13,9 +12,9 @@ def _getargs():
     paa = argparser.add_argument
     paa("file",
         help="Image file to be gapped")
-    paa("-N","-n",type=int,required=True,
-        help="Number of stripes (will be N-1 gaps)")
-    paa("--gap","-g",type=int,
+    paa("--tiles","-t",nargs=2,type=int,required=True,
+        help="Tuple with number of horizontal,vertical stripes (will be T-1 gaps)")
+    paa("--gap","-g",type=int,default=0,
         help="Number of pixels in each gap")
     paa("--frame",action="store_true",
         help="Include a frame around the whole image")
@@ -34,7 +33,7 @@ def _main(args):
     '''main'''
     v.vprint(args)
 
-    nstripes = args.N
+    nwstripes,nhstripes = args.tiles
     basefile = args.file
     framegap = args.gap if args.frame else 0
     with Image.open(basefile) as baseim:
@@ -43,24 +42,28 @@ def _main(args):
             baseim = baseim.rotate(args.angle,expand=True)
         width,height = baseim.size
 
-        gwidth = width + (nstripes-1)*args.gap + 2*framegap
-        gheight = height + 2*framegap
+        gwidth = width + (nwstripes-1)*args.gap + 2*framegap
+        gheight = height + (nhstripes-1)*args.gap + 2*framegap
+        v.vprint(f'G: {gwidth}x{gheight}')
         gapim = Image.new('RGB',(gwidth,gheight),
                           color=args.color)
 
-        for n in range(nstripes):
-            wlo = n*width//nstripes
-            whi = (1+n)*width//nstripes
-            box = (wlo,0,whi,height)
+        for nw in range(nwstripes):
+            for nh in range(nhstripes):
+                wlo = nw*width//nwstripes
+                whi = (1+nw)*width//nwstripes
+                hlo = nh*height//nhstripes
+                hhi = (1+nh)*height//nhstripes
+                box = (wlo,hlo,whi,hhi)
                           
-            gwlo = wlo + n*args.gap + framegap
-            gwhi = gwlo + (whi-wlo)
-            ghlo = framegap
-            ghhi = ghlo + height
-            gbox = (gwlo,ghlo,gwhi,ghhi)
+                gwlo = wlo + nw*args.gap + framegap
+                gwhi = gwlo + (whi-wlo)
+                ghlo = hlo + nh*args.gap + framegap
+                ghhi = ghlo + (hhi-hlo)
+                gbox = (gwlo,ghlo,gwhi,ghhi)
 
-            region = baseim.crop(box)
-            gapim.paste(region,gbox)
+                region = baseim.crop(box)
+                gapim.paste(region,gbox)
 
         if args.angle:
             ## fixme!
