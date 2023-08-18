@@ -7,13 +7,13 @@ import numpy as np
 from PIL import Image
 import verbose as v
 from tqdm import tqdm
+import multifile
 
 def _getargs():
     '''parse options from command line'''
     argparser = argparse.ArgumentParser(description=__doc__)
+    multifile.addargs(argparser)
     paa = argparser.add_argument
-    paa("files",nargs='*',
-        help="Image files to be merged")
     paa("--xpand","-x",nargs=2,type=float,
         help="Percentile clips; eg '-x 1 99'")
     paa("--fcn","-f",default="ave",choices=("ave","min","max"),
@@ -31,9 +31,11 @@ def _main(args):
     '''main'''
     v.vprint(args)
 
+    allfiles = multifile.getfiles(args)
+
     imbase = None
-    nfiles = len(args.files)
-    for n,infile in v.vtqdm(enumerate(args.files),total=nfiles):
+    nfiles = len(allfiles)
+    for n,infile in v.vtqdm(enumerate(allfiles),total=nfiles):
         with Image.open(infile) as im:
             npim = np.array(im,dtype=float)
             if args.pnorm != 1:
