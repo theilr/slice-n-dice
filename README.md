@@ -60,7 +60,7 @@ Pixel-wise composite that uses the most anomalous pixel value for every pixel lo
 
 ### jitterbox:
 
-This routine (unlike most of the rest of the routines in this package) works with only a single input image; it breaks it into tiles, and then jitters the tiles to produce a jittered version of the image. Kind of like pixel spread, but 1/ for tiles and 2/ the jitter is at the pixel and not the tile level.
+This routine (unlike most of the rest of the routines in this package) works with only a single input image; it breaks it into tiles, and then jitters the tiles to produce a jittered version of the image. Note that the tiles on the edge of an image have to be treated carefully so that the jittering is from a tile that does not extend outside the size of the image. Normally that is not noticeable, but if you try jittering whole stripes, that means no jittering will occur; to enable jittering beyond the edges of the image, use the `--pad` option. 
 
 ![too much coffee](https://live.staticflickr.com/65535/53097897181_e5a3b12e6c.jpg)
 
