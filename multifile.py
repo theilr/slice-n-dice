@@ -1,5 +1,5 @@
 '''specify a "range" of files'''
-from util.intlist import str_intgen
+from intlist import str_intgen
 
 def files_fromstring(str_intrange,**kw):
     intrange = str_intgen(str_intrange)
