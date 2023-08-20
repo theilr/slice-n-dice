@@ -20,6 +20,10 @@ def _getargs():
         help="Percentile clips; eg '-x 1 99'")
     paa("--output","-o",default='mean.jpg',
         help="Write output interval image to this file")
+    paa("--inmean",
+        help="Read fle to get mean image")
+    paa("--outmean",
+        help="Write mean image to this file")
     paa("--verbose","-v",action="count",default=0,
         help="verbose")
     args = argparser.parse_args()
@@ -34,15 +38,22 @@ def _main(args):
     nfiles = len(allfiles)
 
     v.vprint('First pass: get mean')
-    for n,infile in v.vtqdm(enumerate(allfiles),total=nfiles):
-        with Image.open(infile) as im:
-            npim = np.array(im,dtype=float)
-            if n==0:
-                npmean = npim
-                exifbase = im.getexif()
-            else:
-                npmean += npim
-    npmean /= nfiles
+    if args.inmean:
+        with Image.open(args.inmean) as im:
+            exifbase = im.getexif()
+            npmean = np.array(im,dtype=float)
+    else:
+        npmean=0
+        for n,infile in v.vtqdm(enumerate(allfiles),total=nfiles):
+            with Image.open(infile) as im:
+                if n==0:
+                    exifbase = im.getexif()
+                npim = np.array(im,dtype=float)
+                npmean = npmean + npim
+        npmean /= nfiles
+    if args.outmean:
+        immean = Image.fromarray(np.asarray(npmean,dtype=np.uint8))
+        immean.save(args.outmean,quality="high",exif=exifbase)
 
     v.vprint('Second pass: get distances')
     distances = list()

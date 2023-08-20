@@ -34,6 +34,8 @@ def _getargs():
         help="Use least anomalous (minimum distance) tiles")
     paa("--output","-o",required=True,
         help="Write output interval image to this file")
+    paa("--inmean",
+        help="Read fle to get mean image")
     paa("--outmean",
         help="Write mean image to this file")
     paa("--angle",type=float,default=0,
@@ -47,7 +49,6 @@ def tile_distance(x,y):
     ''' x and y should be np arrays of the same size'''
     assert x.shape == y.shape
     return np.sqrt(np.mean((x-y)**2))
-    
         
 def _main(args):
     '''main'''
@@ -87,15 +88,22 @@ def _main(args):
         v.vprint(f'({owidth},{oheight}) -> ({width},{height})')
 
         ## first pass, compute average image
-        v.vprint('First pass: compute average')
-        for n,infile in v.vtqdm(enumerate(allfiles),total=nfiles):
-            with Image.open(infile) as im:
-                if n==0:
-                    npmean = 0*np.array(im,dtype=float)
-                npim = np.array(im,dtype=float)
-                npmean += npim / nfiles
-        npmean = np.asarray(npmean,dtype=np.uint8)
-        immean = Image.fromarray(npmean)
+        v.vprint('First pass: compute mean')
+        if args.inmean:
+            with Image.open(args.inmean) as im:
+                immean = im.copy()
+        else:
+            for n,infile in v.vtqdm(enumerate(allfiles),total=nfiles):
+                with Image.open(infile) as im:
+                    if n==0:
+                        npmean = 0*np.array(im,dtype=float)
+                    npim = np.array(im,dtype=float)
+                    npmean += npim / nfiles
+            npmean = np.asarray(npmean,dtype=np.uint8)
+            immean = Image.fromarray(npmean)
+        if args.outmean:
+            immean.save(args.outmean,quality="high")
+
         if args.angle:
             immean = trotate(immean,args.angle)
         ## still in first pass, break immean into tiles
@@ -147,8 +155,6 @@ def _main(args):
 
         baseim.save(args.output,quality="high",exif=baseim.getexif())
 
-        if args.outmean:
-            immean.save(args.outmean,quality="high")
     
 if __name__ == "__main__":
 
