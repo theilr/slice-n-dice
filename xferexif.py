@@ -4,13 +4,9 @@
 ## exif info, and place it into the processed image
 ## I suppose it could be used in nefarious ways, as well...
 
-import sys
 import argparse
-import random
-import numpy as np
 from PIL import Image
 import verbose as v
-from tqdm import tqdm
 
 def _getargs():
     '''parse options from command line'''
@@ -38,15 +34,15 @@ def _main(args):
         exif = img_exif.getexif()
     if exif is None:
         raise RuntimeError("No EXIF is available")
-    v.vprint('EXIF:\n',exif)
-    for n in exif:
-        if isinstance(exif[n],str):
-            exif[n] = exif[n].strip().strip('\x00')
+    v.vvprint('EXIF:\n',exif)
+    for nom in exif:
+        if isinstance(exif[nom],str):
+            exif[nom] = exif[nom].strip().strip('\x00')
     v.vprint('EXIF:\n',exif)
     img = Image.open(args.input)
     v.vprint('Wriging image to: ',outfile)
     img.save(outfile,quality="high",exif=exif)
-        
+
 if __name__ == "__main__":
 
     _args = _getargs()
