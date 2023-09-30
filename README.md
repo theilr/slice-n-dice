@@ -62,7 +62,11 @@ Pixel-wise composite that uses the most anomalous pixel value for every pixel lo
 
 This routine (unlike most of the rest of the routines in this package) works with only a single input image; it breaks it into tiles, and then jitters the tiles to produce a jittered version of the image. Note that the tiles on the edge of an image have to be treated carefully so that the jittering is from a tile that does not extend outside the size of the image. Normally that is not noticeable, but if you try jittering whole stripes, that means no jittering will occur; to enable jittering beyond the edges of the image, use the `--pad` option. 
 
-![too much coffee](https://live.staticflickr.com/65535/53097897181_e5a3b12e6c.jpg)
+![too much coffee](https://live.staticflickr.com/65535/53097897181_e5a3b12e6c.jpg) ![jenga tower](https://live.staticflickr.com/65535/53129450416_035eca6bd3.jpg)
+
+### xferexif:
+
+General utility for copying EXIF information from one image to another; useful for packages that process images but do not keep track of EXIF information. (Most of the routines in this package *do* already transfer the EXIF info, when it is available, but this is handy for other processing packages.)
 
 ## Libraries
 
